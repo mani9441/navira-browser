@@ -6,6 +6,7 @@ import {
 } from "../browser/BrowserEvents";
 
 import { ThemeDetector } from "./ThemeDetector";
+
 import { CursorService } from "./CursorService";
 
 import { useBrowserStore } from "../store/browserStore";
@@ -14,18 +15,32 @@ import { HistoryManager } from "../browser/HistoryManager";
 
 export class WebviewService {
   static attach(view, tabId) {
-    const updateMetadata = () => {
+    /* =========================================
+       META
+    ========================================= */
+
+    const updateTitle = () => {
       TabManager.update(tabId, {
         title:
           view.getTitle() || "New Tab",
-
-        url: view.getURL(),
       });
     };
 
-    const handleDomReady = async () => {
+    // const updateURL = () => {
+    //   TabManager.update(tabId, {
+    //     url: view.getURL(),
+    //   });
+    // };
+
+    /* =========================================
+       THEME + CURSOR
+    ========================================= */
+
+    const applyTheme = async () => {
       const mode =
-        await ThemeDetector.detect(view);
+        await ThemeDetector.detect(
+          view,
+        );
 
       useBrowserStore
         .getState()
@@ -42,12 +57,20 @@ export class WebviewService {
       );
     };
 
+    /* =========================================
+       FAVICON
+    ========================================= */
+
     const handleFavicon = (e) => {
       TabManager.update(tabId, {
         favicon:
           e.favicons?.[0] || null,
       });
     };
+
+    /* =========================================
+       LOADING
+    ========================================= */
 
     const handleLoadingStart = () => {
       TabManager.update(tabId, {
@@ -62,68 +85,50 @@ export class WebviewService {
 
     const handleLoadingStop =
       async () => {
-        const url = view.getURL();
-
-        const title =
-          view.getTitle();
-
         TabManager.update(tabId, {
           loading: false,
         });
 
-        updateMetadata();
-
-        HistoryManager.add(
-          url,
-          title,
-        );
-
-        const mode =
-          await ThemeDetector.detect(
-            view,
-          );
-
-        useBrowserStore
-          .getState()
-          .setThemeMode(mode);
-
-        await CursorService.inject(
-          view,
-          mode,
+        await HistoryManager.add(
+          view.getURL(),
+          view.getTitle(),
         );
 
         eventBus.emit(
           BrowserEventTypes.PAGE_LOADED,
           {
             tabId,
-            url,
+            url: view.getURL(),
           },
         );
       };
+
+    /* =========================================
+       NEW WINDOW
+    ========================================= */
 
     const handleNewWindow = (e) => {
       TabManager.create(e.url);
     };
 
+    /* =========================================
+       EVENTS
+    ========================================= */
+
     view.addEventListener(
       "dom-ready",
-      handleDomReady,
+      applyTheme,
     );
 
     view.addEventListener(
       "page-title-updated",
-      updateMetadata,
+      updateTitle,
     );
 
-    view.addEventListener(
-      "did-navigate",
-      updateMetadata,
-    );
-
-    view.addEventListener(
-      "did-navigate-in-page",
-      updateMetadata,
-    );
+    // view.addEventListener(
+    //   "did-navigate",
+    //   updateURL,
+    // );
 
     view.addEventListener(
       "page-favicon-updated",
@@ -145,25 +150,24 @@ export class WebviewService {
       handleNewWindow,
     );
 
+    /* =========================================
+       CLEANUP
+    ========================================= */
+
     return () => {
       view.removeEventListener(
         "dom-ready",
-        handleDomReady,
+        applyTheme,
       );
 
       view.removeEventListener(
         "page-title-updated",
-        updateMetadata,
+        updateTitle,
       );
 
       view.removeEventListener(
         "did-navigate",
-        updateMetadata,
-      );
-
-      view.removeEventListener(
-        "did-navigate-in-page",
-        updateMetadata,
+        updateURL,
       );
 
       view.removeEventListener(
