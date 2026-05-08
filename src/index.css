@@ -16,6 +16,12 @@
   box-sizing: border-box;
 }
 
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  background: #09091f;
+}
+
 
 /* =========================
    ELECTRON WINDOW CLIPPING
@@ -23,10 +29,12 @@
 
 html,
 body,
-#root,
-.window-shell {
-  background: transparent !important;
+#root {
+  width: 100%;
+  height: 100%;
+  background: #09091f;
 }
+
 .window-shell {
   width: 100vw;
   height: 100vh;
@@ -36,6 +44,9 @@ body,
   background: transparent;
 
   box-sizing: border-box;
+
+  overflow: hidden;
+  border-radius: 32px;
 }
 
 .main-wrapper {
@@ -165,7 +176,7 @@ body::before {
 
 .main-wrapper {
   padding: 10px 14px 14px 14px;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -185,6 +196,10 @@ body::before {
   gap: 10px;
   user-select: none;
   position: relative;
+}
+
+.tab-icon {
+  object-fit: contain;
 }
 
 .window-controls {
@@ -496,4 +511,13 @@ webview {
       transparent 45%
     ),
     #dfe7f4;
+}
+
+
+#root {
+  isolation: isolate;
+}
+
+.content-viewport {
+  background: white;
 }
