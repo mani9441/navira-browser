@@ -2,8 +2,6 @@ export class GeminiProvider {
   static async complete({ prompt }) {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-    console.log("KEY:", apiKey);
-
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`,
       {
