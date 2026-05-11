@@ -521,3 +521,325 @@ webview {
 .content-viewport {
   background: white;
 }
+
+/* =====================================================
+   BROWSER + AI LAYOUT
+===================================================== */
+
+.browser-layout {
+  flex: 1;
+
+  display: flex;
+
+  gap: 14px;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.browser-main {
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+/* =====================================================
+   AI SIDEBAR
+===================================================== */
+
+.ai-sidebar {
+  width: 360px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border-radius: 22px;
+
+  background: var(--glass);
+
+  backdrop-filter: blur(24px);
+
+  border: 1px solid var(--glass-border);
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.35);
+
+  position: relative;
+}
+
+.ai-sidebar::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      transparent 30%
+    );
+
+  opacity: 0.8;
+}
+
+/* =====================================================
+   AI HEADER
+===================================================== */
+
+.ai-header {
+  height: 58px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 0 18px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: var(--text-main);
+
+  border-bottom:
+    1px solid var(--glass-border);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  backdrop-filter: blur(20px);
+
+  z-index: 2;
+}
+
+/* =====================================================
+   AI MESSAGES
+===================================================== */
+
+.ai-messages {
+  flex: 1;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  min-height: 0;
+}
+
+.ai-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-messages::-webkit-scrollbar-thumb {
+  background:
+    rgba(255,255,255,0.12);
+
+  border-radius: 999px;
+}
+
+/* =====================================================
+   MESSAGE BUBBLES
+===================================================== */
+
+.ai-msg {
+  max-width: 92%;
+
+  padding: 14px 16px;
+
+  border-radius: 18px;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  word-wrap: break-word;
+
+  white-space: pre-wrap;
+
+  color: var(--text-main);
+
+  backdrop-filter: blur(18px);
+
+  animation:
+    aiMessageAppear 0.22s ease;
+}
+
+.ai-msg.user {
+  align-self: flex-end;
+
+  background:
+    rgba(59,130,246,0.24);
+
+  border:
+    1px solid rgba(59,130,246,0.35);
+}
+
+.ai-msg.assistant {
+  align-self: flex-start;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+}
+
+@keyframes aiMessageAppear {
+  from {
+    opacity: 0;
+    transform:
+      translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0);
+  }
+}
+
+/* =====================================================
+   INPUT AREA
+===================================================== */
+
+.ai-input {
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  border-top:
+    1px solid var(--glass-border);
+
+  background:
+    rgba(255,255,255,0.03);
+}
+
+.ai-input input {
+  flex: 1;
+
+  height: 44px;
+
+  border: none;
+
+  outline: none;
+
+  border-radius: 14px;
+
+  padding: 0 16px;
+
+  background:
+    rgba(255,255,255,0.07);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  color: var(--text-main);
+
+  font-size: 13px;
+
+  transition:
+    border 0.2s ease,
+    background 0.2s ease;
+}
+
+.ai-input input:focus {
+  border:
+    1px solid rgba(59,130,246,0.55);
+
+  background:
+    rgba(255,255,255,0.1);
+}
+
+.ai-input input::placeholder {
+  color: var(--text-dim);
+}
+
+.ai-input button {
+  height: 44px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: var(--accent);
+
+  color: white;
+
+  font-weight: 600;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.2s ease;
+}
+
+.ai-input button:hover {
+  opacity: 0.9;
+}
+
+.ai-input button:active {
+  transform: scale(0.97);
+}
+
+/* =====================================================
+   STREAMING INDICATOR
+===================================================== */
+
+.ai-streaming {
+  padding:
+    0 18px 14px 18px;
+
+  font-size: 12px;
+
+  color: var(--text-dim);
+
+  animation:
+    aiPulse 1.2s infinite;
+}
+
+@keyframes aiPulse {
+  0% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.35;
+  }
+}

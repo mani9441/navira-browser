@@ -1,6 +1,8 @@
 import { TabManager } from "./TabManager";
 import { useBrowserStore } from "../store/browserStore";
 
+import { ToolRegistry } from "../ai/ToolRegistry";
+
 export const browser = {
   tabs: {
     create: async (url) => await TabManager.create(url),
@@ -50,5 +52,17 @@ export const browser = {
     getActiveTab: () => useBrowserStore.getState().getActiveTab(),
 
     getActiveTabId: () => useBrowserStore.getState().activeTabId,
+  },
+
+  ai: {
+    tools: {
+      execute: async (tool, payload) => {
+        return await ToolRegistry.execute(tool, payload);
+      },
+
+      getAllTools: () => {
+        return ToolRegistry.getAll();
+      },
+    },
   },
 };

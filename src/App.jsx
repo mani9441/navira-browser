@@ -9,6 +9,7 @@ import { browser } from "./browser/BrowserAPI";
 import TabBar from "./components/TabBar";
 import Navbar from "./components/Navbar";
 import WebviewContainer from "./components/WebviewContainer";
+import AISidebar from "./components/AISidebar";
 
 import { ProfileManager } from "./browser/ProfileManager";
 
@@ -48,12 +49,15 @@ export default function App() {
       if (savedTabs && savedTabs.length > 0) {
         const mapped = savedTabs.map((t) => ({
           id: t.id,
+
           profileId: t.profile_id,
 
           partition: t.partition_name,
 
           url: t.url,
+
           title: t.title,
+
           favicon: t.favicon,
 
           loading: false,
@@ -87,11 +91,17 @@ export default function App() {
           themeMode === "light" ? "theme-light" : "theme-dark"
         }`}
       >
-        <TabBar />
+        <div className="browser-layout">
+          <div className="browser-main">
+            <TabBar />
 
-        <Navbar />
+            <Navbar />
 
-        <WebviewContainer />
+            <WebviewContainer />
+          </div>
+
+          <AISidebar />
+        </div>
       </div>
     </div>
   );
