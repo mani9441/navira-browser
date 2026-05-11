@@ -18,15 +18,23 @@ export class ContextEngine {
       activeTab: activeTab
         ? {
             id: activeTab.id,
+
             title: activeTab.title,
+
             url: activeTab.url,
+
+            extraction: activeTab.extraction || null,
           }
         : null,
 
       openTabs: tabs.map((tab) => ({
         id: tab.id,
+
         title: tab.title,
+
         url: tab.url,
+
+        extraction: tab.extraction || null,
       })),
 
       recentHistory: history?.slice(0, 20)?.map((h) => ({

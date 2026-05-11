@@ -10,6 +10,8 @@ import { useBrowserStore } from "../store/browserStore";
 
 import { HistoryManager } from "../browser/HistoryManager";
 
+import { DOMExtractor } from "../ai/extraction/DOMExtractor";
+
 export class WebviewService {
   static attach(view, tabId) {
     /* =========================================
@@ -63,15 +65,29 @@ export class WebviewService {
     };
 
     const handleLoadingStop = async () => {
+      const url = view.getURL();
+
+      const title = view.getTitle();
+
+      const extraction = await DOMExtractor.extract(view);
+
       TabManager.update(tabId, {
         loading: false,
+
+        title,
+
+        url,
+
+        extraction,
       });
 
-      await HistoryManager.add(view.getURL(), view.getTitle());
+      await applyTheme();
+
+      await HistoryManager.add(url, title);
 
       eventBus.emit(BrowserEventTypes.PAGE_LOADED, {
         tabId,
-        url: view.getURL(),
+        url,
       });
     };
 
