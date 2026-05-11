@@ -50,11 +50,11 @@ export default function Navbar() {
         <ShieldCheck size={16} color="var(--text-dim)" />
 
         <input
-          defaultValue={activeTab?.url}
+          value={activeTab?.url || ""}
+          onChange={() => {}}
           onKeyDown={navigate}
           placeholder="Search or enter URL"
         />
-
         <Star size={16} color="var(--text-dim)" />
       </div>
 

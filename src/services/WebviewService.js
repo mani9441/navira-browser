@@ -1,9 +1,6 @@
 import { TabManager } from "../browser/TabManager";
 
-import {
-  eventBus,
-  BrowserEventTypes,
-} from "../browser/BrowserEvents";
+import { eventBus, BrowserEventTypes } from "../browser/BrowserEvents";
 
 import { ThemeDetector } from "./ThemeDetector";
 
@@ -19,42 +16,28 @@ export class WebviewService {
        META
     ========================================= */
 
-    const updateTitle = () => {
+    const syncNavigationState = () => {
       TabManager.update(tabId, {
-        title:
-          view.getTitle() || "New Tab",
+        title: view.getTitle() || "New Tab",
+
+        url: view.getURL(),
+
+        loading: view.isLoading(),
       });
     };
-
-    // const updateURL = () => {
-    //   TabManager.update(tabId, {
-    //     url: view.getURL(),
-    //   });
-    // };
 
     /* =========================================
        THEME + CURSOR
     ========================================= */
 
     const applyTheme = async () => {
-      const mode =
-        await ThemeDetector.detect(
-          view,
-        );
+      const mode = await ThemeDetector.detect(view);
 
-      useBrowserStore
-        .getState()
-        .setThemeMode(mode);
+      useBrowserStore.getState().setThemeMode(mode);
 
-      eventBus.emit(
-        BrowserEventTypes.THEME_CHANGED,
-        { mode },
-      );
+      eventBus.emit(BrowserEventTypes.THEME_CHANGED, { mode });
 
-      await CursorService.inject(
-        view,
-        mode,
-      );
+      await CursorService.inject(view, mode);
     };
 
     /* =========================================
@@ -63,8 +46,7 @@ export class WebviewService {
 
     const handleFavicon = (e) => {
       TabManager.update(tabId, {
-        favicon:
-          e.favicons?.[0] || null,
+        favicon: e.favicons?.[0] || null,
       });
     };
 
@@ -77,31 +59,21 @@ export class WebviewService {
         loading: true,
       });
 
-      eventBus.emit(
-        BrowserEventTypes.PAGE_LOADING,
-        { tabId },
-      );
+      eventBus.emit(BrowserEventTypes.PAGE_LOADING, { tabId });
     };
 
-    const handleLoadingStop =
-      async () => {
-        TabManager.update(tabId, {
-          loading: false,
-        });
+    const handleLoadingStop = async () => {
+      TabManager.update(tabId, {
+        loading: false,
+      });
 
-        await HistoryManager.add(
-          view.getURL(),
-          view.getTitle(),
-        );
+      await HistoryManager.add(view.getURL(), view.getTitle());
 
-        eventBus.emit(
-          BrowserEventTypes.PAGE_LOADED,
-          {
-            tabId,
-            url: view.getURL(),
-          },
-        );
-      };
+      eventBus.emit(BrowserEventTypes.PAGE_LOADED, {
+        tabId,
+        url: view.getURL(),
+      });
+    };
 
     /* =========================================
        NEW WINDOW
@@ -115,80 +87,55 @@ export class WebviewService {
        EVENTS
     ========================================= */
 
-    view.addEventListener(
-      "dom-ready",
-      applyTheme,
-    );
+    view.addEventListener("dom-ready", applyTheme);
 
-    view.addEventListener(
-      "page-title-updated",
-      updateTitle,
-    );
+    view.addEventListener("page-title-updated", syncNavigationState);
+
+    view.addEventListener("did-navigate", syncNavigationState);
+
+    view.addEventListener("did-navigate-in-page", syncNavigationState);
+
+    view.addEventListener("did-start-loading", syncNavigationState);
+
+    view.addEventListener("did-stop-loading", syncNavigationState);
 
     // view.addEventListener(
     //   "did-navigate",
     //   updateURL,
     // );
 
-    view.addEventListener(
-      "page-favicon-updated",
-      handleFavicon,
-    );
+    view.addEventListener("page-favicon-updated", handleFavicon);
 
-    view.addEventListener(
-      "did-start-loading",
-      handleLoadingStart,
-    );
+    view.addEventListener("did-start-loading", handleLoadingStart);
 
-    view.addEventListener(
-      "did-stop-loading",
-      handleLoadingStop,
-    );
+    view.addEventListener("did-stop-loading", handleLoadingStop);
 
-    view.addEventListener(
-      "new-window",
-      handleNewWindow,
-    );
+    view.addEventListener("new-window", handleNewWindow);
 
     /* =========================================
        CLEANUP
     ========================================= */
 
     return () => {
-      view.removeEventListener(
-        "dom-ready",
-        applyTheme,
-      );
+      view.removeEventListener("dom-ready", applyTheme);
 
-      view.removeEventListener(
-        "page-title-updated",
-        updateTitle,
-      );
+      view.removeEventListener("page-title-updated", syncNavigationState);
 
-      view.removeEventListener(
-        "did-navigate",
-        updateURL,
-      );
+      view.removeEventListener("did-navigate", syncNavigationState);
 
-      view.removeEventListener(
-        "page-favicon-updated",
-        handleFavicon,
-      );
+      view.removeEventListener("did-navigate-in-page", syncNavigationState);
 
-      view.removeEventListener(
-        "did-start-loading",
-        handleLoadingStart,
-      );
+      view.removeEventListener("did-start-loading", syncNavigationState);
 
-      view.removeEventListener(
-        "did-stop-loading",
-        handleLoadingStop,
-      );
+      view.removeEventListener("did-stop-loading", syncNavigationState);
 
-      view.removeEventListener(
-        "new-window",
-        handleNewWindow,
-      );
+      view.removeEventListener("page-favicon-updated", handleFavicon);
+
+      view.removeEventListener("did-start-loading", handleLoadingStart);
+
+      view.removeEventListener("did-stop-loading", handleLoadingStop);
+
+      view.removeEventListener("new-window", handleNewWindow);
     };
   }
 }

@@ -16,15 +16,31 @@ export const browser = {
     navigate: (id, url) => TabManager.navigate(id, url),
 
     reload: () => {
-      document.querySelector(".active-view")?.reload();
+      const view = document.querySelector(".active-view");
+
+      if (!view) return;
+
+      view.reload();
     },
 
     back: () => {
-      document.querySelector(".active-view")?.goBack();
+      const view = document.querySelector(".active-view");
+
+      if (!view) return;
+
+      if (view.canGoBack()) {
+        view.goBack();
+      }
     },
 
     forward: () => {
-      document.querySelector(".active-view")?.goForward();
+      const view = document.querySelector(".active-view");
+
+      if (!view) return;
+
+      if (view.canGoForward()) {
+        view.goForward();
+      }
     },
   },
 

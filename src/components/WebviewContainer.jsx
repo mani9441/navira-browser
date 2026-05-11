@@ -14,6 +14,15 @@ export default function WebviewContainer() {
   const initializedRef = useRef(new Set());
 
   useEffect(() => {
+    Object.keys(webviewsRef.current).forEach((id) => {
+      const exists = tabs.find((t) => t.id === Number(id));
+
+      if (!exists) {
+        delete webviewsRef.current[id];
+
+        initializedRef.current.delete(Number(id));
+      }
+    });
     tabs.forEach((tab) => {
       const view = webviewsRef.current[tab.id];
 
@@ -39,9 +48,9 @@ export default function WebviewContainer() {
 
             webviewsRef.current[tab.id] = el;
           }}
-          data-tab-id={tab.id}
+          data-id={tab.id}
           partition={tab.partition}
-          src={tab.initialURL}
+          src={tab.url}
           className={tab.id === activeTabId ? "active-view" : ""}
           style={{
             position: "absolute",
