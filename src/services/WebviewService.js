@@ -12,6 +12,8 @@ import { HistoryManager } from "../browser/HistoryManager";
 
 import { DOMExtractor } from "../ai/extraction/DOMExtractor";
 
+import { PageClassifier } from "../ai/classification/PageClassifier";
+
 export class WebviewService {
   static attach(view, tabId) {
     /* =========================================
@@ -71,6 +73,8 @@ export class WebviewService {
 
       const extraction = await DOMExtractor.extract(view);
 
+      const classification = PageClassifier.classify(extraction);
+
       TabManager.update(tabId, {
         loading: false,
 
@@ -79,6 +83,8 @@ export class WebviewService {
         url,
 
         extraction,
+
+        classification,
       });
 
       await applyTheme();
