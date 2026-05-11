@@ -13,24 +13,23 @@ const store = new Store();
 
 function createWindow() {
   const win = new BrowserWindow({
-  width: 1200,
-  height: 800,
+    width: 1200,
+    height: 800,
 
-  frame: false,
-  transparent: true,
+    frame: false,
+    transparent: true,
 
-  backgroundColor: "#09091f",
+    backgroundColor: "#09091f",
 
-  hasShadow: false,
+    hasShadow: false,
 
-  webPreferences: {
-    webviewTag: true,
-    contextIsolation: true,
-    nodeIntegration: false,
-    preload: path.join(__dirname, "preload.js"),
-  },
-});
-
+    webPreferences: {
+      webviewTag: true,
+      contextIsolation: true,
+      nodeIntegration: false,
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
 
   win.loadURL("http://localhost:5173");
 
@@ -42,8 +41,7 @@ function createWindow() {
     const menu = Menu.buildFromTemplate([
       {
         label: "Inspect Element",
-        click: () =>
-          win.webContents.inspectElement(props.x, props.y),
+        click: () => win.webContents.inspectElement(props.x, props.y),
       },
       { type: "separator" },
       { label: "Reload Browser", role: "reload" },
@@ -60,11 +58,11 @@ app.on("window-all-closed", () => {
 });
 
 // --- IPC STORE HANDLERS ---
-ipcMain.handle('store-get', (event, key) => {
+ipcMain.handle("store-get", (event, key) => {
   return store.get(key);
 });
 
-ipcMain.handle('store-set', (event, key, value) => {
+ipcMain.handle("store-set", (event, key, value) => {
   store.set(key, value);
 });
 
@@ -89,9 +87,13 @@ ipcMain.on("window-close", () => {
 // Database ipc listeners
 
 ipcMain.handle("tabs-load", () => {
-  return db.prepare(`
+  return db
+    .prepare(
+      `
     SELECT * FROM tabs
-  `).all();
+  `,
+    )
+    .all();
 });
 
 ipcMain.handle("tabs-save", (event, tabs, activeTabId) => {
@@ -120,17 +122,15 @@ ipcMain.handle("tabs-save", (event, tabs, activeTabId) => {
       tab.favicon,
       tab.partition,
       tab.id === activeTabId ? 1 : 0,
-      tab.createdAt
+      tab.createdAt,
     );
   }
 
   return true;
 });
 
-ipcMain.handle(
-  "profile-save",
-  (event, profile) => {
-    const stmt = db.prepare(`
+ipcMain.handle("profile-save", (event, profile) => {
+  const stmt = db.prepare(`
       INSERT OR REPLACE INTO profiles
       (
         id,
@@ -141,30 +141,23 @@ ipcMain.handle(
       VALUES (?, ?, ?, ?)
     `);
 
-    stmt.run(
-      profile.id,
-      profile.name,
-      profile.partition,
-      profile.createdAt
-    );
+  stmt.run(profile.id, profile.name, profile.partition, profile.createdAt);
 
-    return true;
-  }
-);
+  return true;
+});
 
-ipcMain.handle(
-  "profiles-load",
-  () => {
-    return db.prepare(`
+ipcMain.handle("profiles-load", () => {
+  return db
+    .prepare(
+      `
       SELECT * FROM profiles
-    `).all();
-  }
-);
+    `,
+    )
+    .all();
+});
 
-ipcMain.handle(
-  "history-save",
-  (event, entry) => {
-    const stmt = db.prepare(`
+ipcMain.handle("history-save", (event, entry) => {
+  const stmt = db.prepare(`
       INSERT INTO history
       (
         url,
@@ -174,30 +167,24 @@ ipcMain.handle(
       VALUES (?, ?, ?)
     `);
 
-    stmt.run(
-      entry.url,
-      entry.title,
-      Date.now()
-    );
+  stmt.run(entry.url, entry.title, Date.now());
 
-    return true;
-  }
-);
+  return true;
+});
 
-ipcMain.handle(
-  "history-load",
-  () => {
-    return db.prepare(`
+ipcMain.handle("history-load", () => {
+  return db
+    .prepare(
+      `
       SELECT * FROM history
       ORDER BY visited_at DESC
-    `).all();
-  }
-);
+    `,
+    )
+    .all();
+});
 
-ipcMain.handle(
-  "permission-save",
-  (event, permission) => {
-    const stmt = db.prepare(`
+ipcMain.handle("permission-save", (event, permission) => {
+  const stmt = db.prepare(`
       INSERT INTO permissions
       (
         domain,
@@ -208,22 +195,22 @@ ipcMain.handle(
       VALUES (?, ?, ?, ?)
     `);
 
-    stmt.run(
-      permission.domain,
-      permission.permission,
-      permission.status,
-      Date.now()
-    );
+  stmt.run(
+    permission.domain,
+    permission.permission,
+    permission.status,
+    Date.now(),
+  );
 
-    return true;
-  }
-);
+  return true;
+});
 
-ipcMain.handle(
-  "permissions-load",
-  () => {
-    return db.prepare(`
+ipcMain.handle("permissions-load", () => {
+  return db
+    .prepare(
+      `
       SELECT * FROM permissions
-    `).all();
-  }
-);
+    `,
+    )
+    .all();
+});

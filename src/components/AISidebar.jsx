@@ -11,6 +11,8 @@ export default function AISidebar() {
 
   const streaming = useAIStore((s) => s.streaming);
 
+  const currentResponse = useAIStore((s) => s.currentResponse);
+
   const send = async () => {
     if (!input.trim()) return;
 
@@ -49,6 +51,10 @@ export default function AISidebar() {
       </div>
 
       {streaming && <div className="ai-streaming">Thinking...</div>}
+
+      {streaming && currentResponse && (
+        <div className="ai-msg assistant">{currentResponse}</div>
+      )}
     </div>
   );
 }

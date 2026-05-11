@@ -19,9 +19,11 @@ export class AIChatManager {
       content: message,
     });
 
-    eventBus.emit(AIEventTypes.AI_MESSAGE_SENT, { message });
-
     aiStore.setStreaming(true);
+
+    aiStore.setCurrentResponse("");
+
+    eventBus.emit(AIEventTypes.AI_MESSAGE_SENT, { message });
 
     const context = await ContextEngine.build();
 
@@ -32,11 +34,23 @@ export class AIChatManager {
       message,
     });
 
-    const response = await LLMRouter.complete(prompt);
+    const response = await LLMRouter.complete({
+      provider: "gemini",
+
+      prompt,
+
+      onToken: (token) => {
+        const current = useAIStore.getState().currentResponse;
+
+        useAIStore.getState().setCurrentResponse(current + token);
+      },
+    });
 
     aiStore.addMessage(response);
 
     aiStore.setStreaming(false);
+
+    aiStore.setCurrentResponse("");
 
     eventBus.emit(AIEventTypes.AI_RESPONSE_RECEIVED, response);
 
