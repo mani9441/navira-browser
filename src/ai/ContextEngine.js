@@ -26,6 +26,8 @@ export class ContextEngine {
             extraction: activeTab.extraction || null,
 
             classification: activeTab.classification || null,
+
+            intelligence: activeTab.intelligence || null,
           }
         : null,
 
@@ -39,6 +41,8 @@ export class ContextEngine {
         extraction: tab.extraction || null,
 
         classification: tab.classification || null,
+
+        intelligence: tab.intelligence || null,
       })),
 
       recentHistory: history?.slice(0, 20)?.map((h) => ({

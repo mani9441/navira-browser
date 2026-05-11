@@ -14,6 +14,8 @@ import { DOMExtractor } from "../ai/extraction/DOMExtractor";
 
 import { PageClassifier } from "../ai/classification/PageClassifier";
 
+import { TabIntelligence } from "../browser/intelligence/TabIntelligence";
+
 export class WebviewService {
   static attach(view, tabId) {
     /* =========================================
@@ -75,6 +77,23 @@ export class WebviewService {
 
       const classification = PageClassifier.classify(extraction);
 
+      const allTabs = useBrowserStore.getState().tabs;
+
+      const intelligence = TabIntelligence.analyze(
+        {
+          id: tabId,
+
+          title,
+
+          url,
+
+          extraction,
+
+          classification,
+        },
+        allTabs,
+      );
+
       TabManager.update(tabId, {
         loading: false,
 
@@ -85,6 +104,8 @@ export class WebviewService {
         extraction,
 
         classification,
+
+        intelligence,
       });
 
       await applyTheme();
