@@ -15,8 +15,6 @@ import { ProfileManager } from "./browser/ProfileManager";
 
 import { StorageService } from "./services/StorageService";
 
-console.log(import.meta.env.VITE_GEMINI_API_KEY);
-
 export default function App() {
   const isLoaded = useBrowserStore((s) => s.isLoaded);
 
