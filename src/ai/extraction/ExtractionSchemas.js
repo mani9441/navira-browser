@@ -21,6 +21,12 @@ export const EmptyPageSchema = {
 
   interactiveElements: [],
 
+  codeBlocks: [],
+
+  lists: [],
+
+  navigation: [],
+
   metadata: {
     extractedAt: 0,
   },
